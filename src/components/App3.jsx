@@ -15,22 +15,35 @@ const ListaDeInvitados = () => {
     setInvitados(invitados.filter((_, index) => index !== idBorrar));
   };
 
-  return (
-    <div>
-      <input value={texto} onChange={(e) => setTexto(e.target.value)}></input>
-      <button onClick={agregarInvitado}>Agregar invitado</button>
+ return (
+    <div className="contenedor">
+      <h1>🎉 Lista de Invitados</h1>
+      
+      <div className="input-group">
+        <input 
+          value={texto} 
+          onChange={(e) => setTexto(e.target.value)} 
+          placeholder="Nombre del invitado..."
+        />
+        <button className="btn-agregar" onClick={agregarInvitado}>
+          Invitar
+        </button>
+      </div>
+
       <ul>
         {invitados.map((invitado, index) => (
           <li key={index}>
-            {invitado}
-            <button onClick={() => eliminarInvitado(index)}>
-              Eliminar invitado
+            <span>{invitado}</span>
+            <button 
+              className="btn-eliminar" 
+              onClick={() => eliminarInvitado(index)}
+            >
+              Eliminar
             </button>
           </li>
         ))}
       </ul>
     </div>
   );
-};
 
 export default ListaDeInvitados;
