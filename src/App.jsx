@@ -17,7 +17,14 @@ function App() {
 
   const agregarInvitado = () => {
     if (texto.trim() === "") return;
-    setInvitados([...invitados, texto]);
+    const yaExiste = invitados.some(
+      (invitado) => invitado.toLowerCase() === texto.trim().toLowerCase(),
+    );
+    if (yaExiste) {
+      alert("Este invitado ya está en la lista.");
+      return;
+    }
+    setInvitados([...invitados, texto.trim()]);
     setTexto("");
   };
 
@@ -25,10 +32,21 @@ function App() {
     setInvitados(invitados.filter((_, i) => i !== indexABorrar));
   };
 
+  const borrarTodo = () => {
+    const confirmar = window.confirm(
+      "¿Estás seguro de que quieres borrar a TODOS los invitados?",
+    );
+    if (confirmar) {
+      setInvitados([]);
+    }
+  };
+
   return (
     <div className="contenedor">
       <h1>🎉 Lista de Invitados</h1>
-
+      <p className="contador">
+        Tienes <strong>{invitados.length}</strong> invitados en la lista
+      </p>
       <AgregarInvitado
         texto={texto}
         setTexto={setTexto}
@@ -39,6 +57,11 @@ function App() {
         invitados={invitados}
         eliminarInvitado={eliminarInvitado}
       />
+      {invitados.length > 0 && (
+        <button className="btn-borrar-todo" onClick={borrarTodo}>
+          Vaciar Lista
+        </button>
+      )}
     </div>
   );
 }
