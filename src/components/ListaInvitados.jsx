@@ -9,7 +9,13 @@ const ListaInvitados = ({ invitados, eliminarInvitado }) => {
             <span>{invitado}</span>
             <button
               className="btn-eliminar"
-              onClick={() => eliminarInvitado(index)}
+              onClick={() => {
+                if (
+                  window.confirm(`¿Seguro que quieres eliminar a ${invitado}?`)
+                ) {
+                  eliminarInvitado(index);
+                }
+              }}
             >
               Borrar
             </button>
