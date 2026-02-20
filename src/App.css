@@ -102,3 +102,8 @@ li {
 .btn-borrar-todo:hover {
   background-color: #000;
 }
+
+.contador.lleno {
+  color: red;
+  font-weight: bold;
+}

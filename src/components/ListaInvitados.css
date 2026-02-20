@@ -25,3 +25,8 @@ li {
 .btn-eliminar:hover {
   background-color: #ff6b81;
 }
+
+.sin-invitados {
+  text-align: center;
+  color: #888;
+}

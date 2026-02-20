@@ -17,9 +17,7 @@ const ListaInvitados = ({ invitados, eliminarInvitado }) => {
         ))}
       </ul>
       {invitados.length === 0 && (
-        <p style={{ textAlign: "center", color: "#888" }}>
-          No hay invitados aún.
-        </p>
+        <p className="sin-invitados">No hay invitados aún.</p>
       )}
     </>
   );

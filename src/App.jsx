@@ -44,13 +44,7 @@ function App() {
   return (
     <div className="contenedor">
       <h1>🎉 Lista de Invitados</h1>
-      <p
-        className="contador"
-        style={{
-          color: invitados.length > 10 ? "red" : "#666",
-          fontWeight: invitados.length > 10 ? "bold" : "normal",
-        }}
-      >
+      <p className={`contador ${invitados.length > 10 ? "lleno" : ""}`}>
         Tienes <strong>{invitados.length}</strong> invitados en la lista
       </p>
       <AgregarInvitado
