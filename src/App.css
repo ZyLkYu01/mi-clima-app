@@ -38,7 +38,6 @@ button.btn-agregar {
   margin-bottom: 1rem;
 }
 
-/* Estilo para el botón de vaciar */
 .btn-borrar-todo {
   width: 100%;
   margin-top: 20px;
@@ -59,4 +58,12 @@ button.btn-agregar {
 .contador.lleno {
   color: red;
   font-weight: bold;
+}
+
+.input-busqueda {
+  width: 70%;
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }

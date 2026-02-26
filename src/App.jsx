@@ -11,6 +11,7 @@ function App() {
 
   const [texto, setTexto] = useState("");
 
+  const [busqueda, setBusqueda] = useState("");
   useEffect(() => {
     localStorage.setItem("mis_invitados", JSON.stringify(invitados));
   }, [invitados]);
@@ -40,7 +41,9 @@ function App() {
       setInvitados([]);
     }
   };
-
+  const invitadosFiltrados = invitados.filter((invitado) =>
+    invitado.toLowerCase().includes(busqueda.toLowerCase()),
+  );
   return (
     <div className="contenedor">
       <h1>🎉 Lista de Invitados</h1>
@@ -53,9 +56,17 @@ function App() {
         agregarInvitado={agregarInvitado}
         quedanEspacios={invitados.length < 15}
       />
-
+      {invitados.length > 0 && (
+        <input
+          type="text"
+          placeholder="🔍 Buscar invitado..."
+          className="input-busqueda"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
+      )}
       <ListaInvitados
-        invitados={invitados}
+        invitados={invitadosFiltrados}
         eliminarInvitado={eliminarInvitado}
       />
       {invitados.length > 0 && (
