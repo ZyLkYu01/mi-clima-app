@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./App.css";
 
 const App = () => {
   const [ciudad, setCiudad] = useState("");
@@ -33,7 +34,7 @@ const App = () => {
     console.log("Buscando el clima de: ", ciudad);
   };
   return (
-    <div>
+    <div className="container">
       <h1>App del Clima</h1>
 
       <form onSubmit={(e) => e.preventDefault()}>
@@ -47,18 +48,25 @@ const App = () => {
           Buscar
         </button>
       </form>
-      {clima === null && !error && !cargando && (
-        <p>Escribe el nombre de una ciudad para conocer el clima</p>
-      )}
-      {cargando && <p>Buscando el clima... un momento por favor ⏳</p>}
-      {!cargando && !error && clima && (
-        <div>
+
+      {cargando && <p>Cargando...</p>}
+      {error && <p>Ciudad no encontrada</p>}
+
+      {clima && (
+        <div className="weather-card">
           <h2>
             Resultados para: {clima.name} {clima.sys.country}
           </h2>
+          <img
+            src={`https://openweathermap.org/img/wn/${clima.weather[0].icon}@2x.png`}
+            alt={clima.weather[0].description}
+          />
+          <p style={{ textTransform: "capitalize", fontWeight: "bold" }}>
+            {clima.weather[0].description}
+          </p>
           <p>Temperatura actual: {clima.main.temp}°C</p>
-          <p>Sensacion termica: {clima.main.feels_like} °C</p>
-          <p>humedad: {clima.main.humidity} °C</p>
+          <p>Sensación térmica: {clima.main.feels_like}°C</p>
+          <p>Humedad: {clima.main.humidity}%</p>
           <p>Velocidad del viento: {clima.wind.speed} m/s</p>
         </div>
       )}
