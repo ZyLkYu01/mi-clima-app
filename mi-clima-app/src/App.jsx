@@ -58,7 +58,7 @@ const App = () => {
           </h2>
           <p>Temperatura actual: {clima.main.temp}°C</p>
           <p>Sensacion termica: {clima.main.feels_like} °C</p>
-          <p>humedad{clima.main.humidity}</p>
+          <p>humedad: {clima.main.humidity} °C</p>
           <p>Velocidad del viento: {clima.wind.speed} m/s</p>
         </div>
       )}
