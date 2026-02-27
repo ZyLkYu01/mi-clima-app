@@ -1,119 +1,77 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
-import AgregarInvitado from "./components/AgregarInvitado";
-import ListaInvitados from "./components/ListaInvitados";
 
-function App() {
-  const [invitados, setInvitados] = useState(() => {
-    const guardados = localStorage.getItem("mis_invitados");
-    return guardados ? JSON.parse(guardados) : [];
-  });
+const App = () => {
+  const [ciudad, setCiudad] = useState("");
+  const [clima, setClima] = useState(null);
+  const [error, setError] = useState(false);
+  const [cargando, setCargando] = useState(false);
 
-  const cargarInvitadosDeInternet = async () => {
+  const buscarClima = async () => {
+    if (ciudad.trim() === "" || ciudad.trim().length < 3) return;
     setCargando(true);
+    setError(false);
     try {
       const respuesta = await fetch(
-        "https://jsonplaceholder.typicode.com/users",
+        `https://api.openweathermap.org/data/2.5/weather?q=${ciudad}&appid=a1a92c33828f5e65ff4a04aa3998e22c&units=metric&lang=es`,
       );
+      if (!respuesta.ok) {
+        setError(true);
+        setClima(null);
+        console.log("Error de la API. Código:", respuesta.status);
+        return;
+      }
       const datos = await respuesta.json();
-      const nombresDeInternet = datos.map((u) => u.name);
-      setInvitados(nombresDeInternet);
+      setClima(datos);
+      console.log(datos);
     } catch (error) {
       console.error("Error:", error);
+      setError(true);
     } finally {
       setCargando(false);
     }
+
+    console.log("Buscando el clima de: ", ciudad);
   };
-
-  const [cargando, setCargando] = useState(false);
-
-  useEffect(() => {
-    if (invitados.length === 0) {
-      cargarInvitadosDeInternet();
-    }
-  }, []);
-
-  const [texto, setTexto] = useState("");
-
-  const [busqueda, setBusqueda] = useState("");
-  useEffect(() => {
-    localStorage.setItem("mis_invitados", JSON.stringify(invitados));
-  }, [invitados]);
-
-  const agregarInvitado = () => {
-    if (texto.trim() === "") return;
-
-    const yaExiste = invitados.some(
-      (invitado) => invitado.toLowerCase() === texto.trim().toLowerCase(),
-    );
-
-    if (yaExiste) {
-      alert("Este invitado ya está en la lista.");
-      return;
-    }
-    let nombreAGuardar = texto.trim();
-    if (nombreAGuardar === nombreAGuardar.toUpperCase()) {
-      nombreAGuardar = "⭐ " + nombreAGuardar;
-    }
-    setInvitados([...invitados, nombreAGuardar]);
-
-    setTexto("");
-  };
-
-  const eliminarInvitado = (indexABorrar) => {
-    setInvitados(invitados.filter((_, i) => i !== indexABorrar));
-  };
-
-  const borrarTodo = () => {
-    const confirmar = window.confirm(
-      "¿Estás seguro de que quieres borrar a TODOS los invitados?",
-    );
-    if (confirmar) {
-      setInvitados([]);
-    }
-  };
-  const invitadosFiltrados = invitados.filter((invitado) =>
-    invitado.toLowerCase().includes(busqueda.toLowerCase()),
-  );
   return (
-    <div className="contenedor">
-      <h1>🎉 Lista de Invitados</h1>
-      <button className="btn-api" onClick={cargarInvitadosDeInternet}>
-        🌐 Cargar invitados desde Internet
-      </button>
-      <p className={`contador ${invitados.length > 10 ? "lleno" : ""}`}>
-        Tienes <strong>{invitados.length}</strong> invitados en la lista
-      </p>
-      <AgregarInvitado
-        texto={texto}
-        setTexto={setTexto}
-        agregarInvitado={agregarInvitado}
-        quedanEspacios={invitados.length < 15}
-      />
-      {invitados.length > 0 && (
+    <div className="container">
+      <h1>App del Clima</h1>
+
+      <form onSubmit={(e) => e.preventDefault()}>
         <input
           type="text"
-          placeholder="🔍 Buscar invitado..."
-          className="input-busqueda"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          placeholder="Escribe una ciudad..."
+          value={ciudad}
+          onChange={(e) => setCiudad(e.target.value)}
         />
-      )}
-      {cargando ? (
-        <p className="mensaje-carga">⏳ Obteniendo invitados de internet...</p>
-      ) : (
-        <ListaInvitados
-          invitados={invitadosFiltrados}
-          eliminarInvitado={eliminarInvitado}
-        />
-      )}
-      {invitados.length > 0 && (
-        <button className="btn-borrar-todo" onClick={borrarTodo}>
-          Vaciar Lista
+        <button type="button" onClick={buscarClima}>
+          Buscar
         </button>
+      </form>
+
+      {cargando && <p>Cargando...</p>}
+      {error && <p>Ciudad no encontrada</p>}
+
+      {clima && (
+        <div className="weather-card">
+          <h2>
+            Resultados para: {clima.name} {clima.sys.country}
+          </h2>
+          <img
+            src={`https://openweathermap.org/img/wn/${clima.weather[0].icon}@2x.png`}
+            alt={clima.weather[0].description}
+          />
+          <p style={{ textTransform: "capitalize", fontWeight: "bold" }}>
+            {clima.weather[0].description}
+          </p>
+          <p>Temperatura actual: {clima.main.temp}°C</p>
+          <p>Sensación térmica: {clima.main.feels_like}°C</p>
+          <p>Humedad: {clima.main.humidity}%</p>
+          <p>Velocidad del viento: {clima.wind.speed} m/s</p>
+        </div>
       )}
     </div>
   );
-}
+};
 
 export default App;
