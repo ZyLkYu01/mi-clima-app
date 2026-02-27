@@ -9,6 +9,30 @@ function App() {
     return guardados ? JSON.parse(guardados) : [];
   });
 
+  const cargarInvitadosDeInternet = async () => {
+    setCargando(true);
+    try {
+      const respuesta = await fetch(
+        "https://jsonplaceholder.typicode.com/users",
+      );
+      const datos = await respuesta.json();
+      const nombresDeInternet = datos.map((u) => u.name);
+      setInvitados(nombresDeInternet);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const [cargando, setCargando] = useState(false);
+
+  useEffect(() => {
+    if (invitados.length === 0) {
+      cargarInvitadosDeInternet();
+    }
+  }, []);
+
   const [texto, setTexto] = useState("");
 
   const [busqueda, setBusqueda] = useState("");
@@ -18,14 +42,21 @@ function App() {
 
   const agregarInvitado = () => {
     if (texto.trim() === "") return;
+
     const yaExiste = invitados.some(
       (invitado) => invitado.toLowerCase() === texto.trim().toLowerCase(),
     );
+
     if (yaExiste) {
       alert("Este invitado ya está en la lista.");
       return;
     }
-    setInvitados([...invitados, texto.trim()]);
+    let nombreAGuardar = texto.trim();
+    if (nombreAGuardar === nombreAGuardar.toUpperCase()) {
+      nombreAGuardar = "⭐ " + nombreAGuardar;
+    }
+    setInvitados([...invitados, nombreAGuardar]);
+
     setTexto("");
   };
 
@@ -47,6 +78,9 @@ function App() {
   return (
     <div className="contenedor">
       <h1>🎉 Lista de Invitados</h1>
+      <button className="btn-api" onClick={cargarInvitadosDeInternet}>
+        🌐 Cargar invitados desde Internet
+      </button>
       <p className={`contador ${invitados.length > 10 ? "lleno" : ""}`}>
         Tienes <strong>{invitados.length}</strong> invitados en la lista
       </p>
@@ -65,10 +99,14 @@ function App() {
           onChange={(e) => setBusqueda(e.target.value)}
         />
       )}
-      <ListaInvitados
-        invitados={invitadosFiltrados}
-        eliminarInvitado={eliminarInvitado}
-      />
+      {cargando ? (
+        <p className="mensaje-carga">⏳ Obteniendo invitados de internet...</p>
+      ) : (
+        <ListaInvitados
+          invitados={invitadosFiltrados}
+          eliminarInvitado={eliminarInvitado}
+        />
+      )}
       {invitados.length > 0 && (
         <button className="btn-borrar-todo" onClick={borrarTodo}>
           Vaciar Lista
